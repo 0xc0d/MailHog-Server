@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/0xc0d/MailHog-Server/config"
 	"github.com/gorilla/pat"
 	"github.com/ian-kent/go-log/log"
-	"github.com/mailhog/MailHog-Server/config"
 	"github.com/mailhog/data"
 	"github.com/mailhog/storage"
 

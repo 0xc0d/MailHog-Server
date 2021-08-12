@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/ian-kent/linkio"
-	"github.com/mailhog/MailHog-Server/monkey"
+	"github.com/0xc0d/MailHog-Server/monkey"
 	"github.com/mailhog/data"
 	"github.com/mailhog/storage"
 )
