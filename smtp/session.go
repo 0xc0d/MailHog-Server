@@ -10,14 +10,13 @@ import (
 	"github.com/ian-kent/linkio"
 	"github.com/mailhog/MailHog-Server/monkey"
 	"github.com/mailhog/data"
-	"github.com/mailhog/smtp"
 	"github.com/mailhog/storage"
 )
 
 // Session represents a SMTP session using net.TCPConn
 type Session struct {
 	conn          io.ReadWriteCloser
-	proto         *smtp.Protocol
+	proto         *Protocol
 	storage       storage.Storage
 	messageChan   chan *data.Message
 	remoteAddress string
@@ -34,7 +33,7 @@ type Session struct {
 func Accept(remoteAddress string, conn io.ReadWriteCloser, storage storage.Storage, messageChan chan *data.Message, hostname string, monkey monkey.ChaosMonkey) {
 	defer conn.Close()
 
-	proto := smtp.NewProtocol()
+	proto := NewProtocol()
 	proto.Hostname = hostname
 	var link *linkio.Link
 	reader := io.Reader(conn)
@@ -67,12 +66,12 @@ func Accept(remoteAddress string, conn io.ReadWriteCloser, storage storage.Stora
 	session.logf("Session ended")
 }
 
-func (c *Session) validateAuthentication(mechanism string, args ...string) (errorReply *smtp.Reply, ok bool) {
+func (c *Session) validateAuthentication(mechanism string, args ...string) (errorReply *Reply, ok bool) {
 	if c.monkey != nil {
 		ok := c.monkey.ValidAUTH(mechanism, args...)
 		if !ok {
 			// FIXME better error?
-			return smtp.ReplyUnrecognisedCommand(), false
+			return ReplyUnrecognisedCommand(), false
 		}
 	}
 	return nil, true
@@ -152,7 +151,7 @@ func (c *Session) Read() bool {
 }
 
 // Write writes a reply to the underlying net.TCPConn
-func (c *Session) Write(reply *smtp.Reply) {
+func (c *Session) Write(reply *Reply) {
 	lines := reply.Lines()
 	for _, l := range lines {
 		logText := strings.Replace(l, "\n", "\\n", -1)
